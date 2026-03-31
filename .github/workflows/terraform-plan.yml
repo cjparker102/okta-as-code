@@ -1,0 +1,95 @@
+# .github/workflows/terraform-plan.yml
+#
+# Runs terraform plan automatically when a Pull Request is opened.
+#
+# This is infrastructure review — before any change goes live, the team
+# sees exactly what Terraform would do: "create 3 groups, modify 1 policy."
+# Nobody can push a bad change without review.
+#
+# Steps:
+#   1. Format check — ensures consistent code style (like a linter)
+#   2. Init — downloads the Okta provider
+#   3. Validate — catches syntax errors
+#   4. Plan — shows the actual impact of the change
+#
+# Requires OKTA_API_TOKEN to be set as a GitHub repository secret:
+#   Settings > Secrets and variables > Actions > New repository secret
+
+name: Terraform Plan
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  plan:
+    name: Validate and Plan
+    runs-on: ubuntu-latest
+
+    env:
+      OKTA_ORG_NAME: integrator-4874604
+      OKTA_BASE_URL: okta.com
+      OKTA_API_TOKEN: ${{ secrets.OKTA_API_TOKEN }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.14.7"
+
+      - name: Terraform Format Check
+        id: fmt
+        run: terraform fmt -check -recursive
+        continue-on-error: true
+
+      - name: Terraform Init
+        id: init
+        run: terraform init -input=false
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -no-color -input=false
+        continue-on-error: true
+
+      - name: Comment Plan on PR
+        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request'
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `### Terraform Plan Results
+
+            | Step | Status |
+            |------|--------|
+            | Format | ${{ steps.fmt.outcome == 'success' && '✅' || '⚠️' }} |
+            | Init | ${{ steps.init.outcome == 'success' && '✅' || '❌' }} |
+            | Validate | ${{ steps.validate.outcome == 'success' && '✅' || '❌' }} |
+            | Plan | ${{ steps.plan.outcome == 'success' && '✅' || '❌' }} |
+
+            <details><summary>Show Plan Output</summary>
+
+            \`\`\`
+            ${{ steps.plan.outputs.stdout }}
+            \`\`\`
+
+            </details>
+
+            *Triggered by @${{ github.actor }} on \`${{ github.event.pull_request.head.ref }}\`*`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
