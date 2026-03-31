@@ -1,0 +1,21 @@
+# terraform.tfvars.example
+#
+# Copy this file to terraform.tfvars and fill in your values:
+#   cp terraform.tfvars.example terraform.tfvars
+#
+# terraform.tfvars is gitignored — your credentials stay local.
+
+# Your Okta org subdomain (the part before .okta.com)
+# Example: dev-12345678
+okta_org_name = "your-dev-org"
+
+# Base URL — "okta.com" for production, "oktapreview.com" for sandbox
+okta_base_url = "okta.com"
+
+# API Token — generate in Okta Admin Console: Security > API > Tokens
+# Needs Super Admin permissions to manage groups, apps, policies, and roles.
+#
+# Alternatively, set the OKTA_API_TOKEN environment variable instead of
+# putting the token in a file:
+#   export OKTA_API_TOKEN="your-token-here"
+okta_api_token = "your-api-token-here"
