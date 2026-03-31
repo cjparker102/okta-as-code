@@ -1,0 +1,28 @@
+# Terraform state — contains real resource IDs and sensitive data
+# Never commit state files to version control
+*.tfstate
+*.tfstate.*
+
+# Terraform plugin cache — downloaded by `terraform init`
+# Large binaries, always regenerated
+.terraform/
+.terraform.lock.hcl
+
+# Variable values — may contain org-specific or sensitive data
+# Use terraform.tfvars.example as the template
+*.tfvars
+!*.tfvars.example
+
+# Saved plan files can contain sensitive values
+*.tfplan
+
+# Crash logs from Terraform
+crash.log
+crash.*.log
+
+# Local settings
+CLAUDE.md
+.claude/
+
+# macOS
+.DS_Store
