@@ -8,12 +8,12 @@ This project is part of a three-repo IAM toolkit. Each repo handles a different 
 
 ```
 ┌─────────────────┐     ┌──────────────────────┐     ┌──────────────────────┐
-│  okta-as-code   │     │ okta-access-reviewer  │     │ okta-chaos-generator │
-│                 │     │                       │     │                      │
-│   PREVENT       │     │   DETECT              │     │   PRACTICE           │
-│   Define the    │────▶│   Find drift and      │────▶│   Train on realistic │
-│   correct state │     │   anomalies with AI   │     │   broken orgs        │
-│   as code       │     │   analysis            │     │   (CTF-style)        │
+│  okta-as-code   │     │ okta-access-reviewer │     │ okta-chaos-generator │
+│                 │     │                      │     │                      │
+│   PREVENT       │     │   DETECT             │     │   PRACTICE           │
+│   Define the    │────▶│   Find drift and     │────▶│   Train on realistic │
+│   correct state │     │   anomalies with AI  │     │   broken orgs        │
+│   as code       │     │   analysis           │     │   (CTF-style)        │
 └─────────────────┘     └──────────────────────┘     └──────────────────────┘
 ```
 
